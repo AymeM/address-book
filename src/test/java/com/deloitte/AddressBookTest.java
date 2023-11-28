@@ -15,12 +15,15 @@ public class AddressBookTest {
     @Before
     public void setUp() {
         addressBook = new AddressBook();
+
     }
 
     @Test
     public void testReadAddressBookFromFile() {
+        //Local variable in case there is a need to test each function with a different file
         String testFilePath = "src/test/test_resources/AddressBook.txt";
         addressBook.readAddressBookFromFile(testFilePath);
+
         List<Person> people = addressBook.getAddressBook();
 
         assertEquals(5, people.size());
@@ -44,6 +47,16 @@ public class AddressBookTest {
         assertEquals(name, person.getName());
         assertEquals(gender, person.getGender());
         assertEquals(birthDate, person.getBirthDate());
+    }
+
+    @Test
+    public void testCountMaleSuccess() {
+        //Local variable in case there is a need to test each function with a different file
+        String testFilePath = "src/test/test_resources/AddressBook.txt";
+        addressBook.readAddressBookFromFile(testFilePath);
+
+        assertEquals(3, addressBook.countMales());
+
     }
 
 }
