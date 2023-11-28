@@ -32,6 +32,16 @@ public class AddressBook {
         }
     }
 
+    public int countMales() {
+        int maleCount = 0;
+        for (Person person : addressBook) {
+            if ("Male".equals(person.getGender())) {
+                maleCount++;
+            }
+        }
+        return maleCount;
+    }
+
     public void printAddressBook() {
         for (Person person : addressBook) {
             System.out.println("Name: " + person.getName() + ", Gender: " + person.getGender() + ", Birthdate: " + person.getBirthDate());
