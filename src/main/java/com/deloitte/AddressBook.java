@@ -42,6 +42,20 @@ public class AddressBook {
         return maleCount;
     }
 
+    public Person findOldestPerson() {
+        if (addressBook.isEmpty()) {
+            return null;
+        }
+
+        Person oldestPerson = addressBook.get(0); // Assume the first person is the oldest initially
+        for (Person person : addressBook) {
+            if (person.getBirthDate().before(oldestPerson.getBirthDate())) {
+                oldestPerson = person;
+            }
+        }
+        return oldestPerson;
+    }
+
     public void printAddressBook() {
         for (Person person : addressBook) {
             System.out.println("Name: " + person.getName() + ", Gender: " + person.getGender() + ", Birthdate: " + person.getBirthDate());
