@@ -67,4 +67,13 @@ public class AddressBookTest {
         assertEquals("Wes Jackson", addressBook.findOldestPerson().getName());
     }
 
+    @Test
+    public void testFindAgeDifference() {
+        //Local variable in case there is a need to test each function with a different file
+        String testFilePath = "src/test/test_resources/AddressBook.txt";
+        addressBook.readAddressBookFromFile(testFilePath);
+
+        assertEquals(2862, addressBook.calculateAgeDifferenceInDays("Bill McKnight", "Paul Robinson"));
+    }
+
 }

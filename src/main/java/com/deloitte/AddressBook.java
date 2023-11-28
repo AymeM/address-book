@@ -56,6 +56,28 @@ public class AddressBook {
         return oldestPerson;
     }
 
+    //Prefer to use the full name instead of the firstname because it's a better identifier
+    public int calculateAgeDifferenceInDays(String person1Name, String person2Name) {
+        Person person1 = findPersonByName(person1Name);
+        Person person2 = findPersonByName(person2Name);
+
+        if (person1 == null || person2 == null) {
+            return -1; // Handle the case when one or both persons are not found
+        }
+
+        long differenceInMillis = person1.getBirthDate().getTime() - person2.getBirthDate().getTime();
+        return Math.abs((int) (differenceInMillis / (24 * 60 * 60 * 1000))); // Convert milliseconds to days
+    }
+
+    private Person findPersonByName(String name) {
+        for (Person person : addressBook) {
+            if (name.equals(person.getName())) {
+                return person;
+            }
+        }
+        return null; // Handle the case when the person is not found
+    }
+
     public void printAddressBook() {
         for (Person person : addressBook) {
             System.out.println("Name: " + person.getName() + ", Gender: " + person.getGender() + ", Birthdate: " + person.getBirthDate());

@@ -8,6 +8,7 @@ public class Person {
     private String gender;
     private Date birthDate;
 
+    //TODO find a good approach to convert name to first and last names. Split by " " is ok but will not cover cases like Charles De Gaulle
     public Person(String name, String gender, Date birthDate) {
         this.name = name;
         this.gender = gender;
