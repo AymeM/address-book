@@ -5,6 +5,7 @@ import java.util.Scanner;
 import java.util.function.Consumer;
 public class FileReader {
 
+    // Passing a Consumer in the parameters to make this method generic to any kind of txt file following the same structure. (One object described per line)
     public void readFromFile(String filePath, Consumer<String> lineProcessor) throws FileNotFoundException {
         try {
             File file = new File(filePath);
