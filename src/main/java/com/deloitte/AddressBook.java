@@ -1,59 +1,55 @@
 package com.deloitte;
 
-import java.io.FileNotFoundException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import com.deloitte.util.DateUtil;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class AddressBook {
 
+    private static final Logger LOGGER = Logger.getLogger(AddressBook.class.getName());
     private List<Person> addressBook = new ArrayList<>();
 
     public void readAddressBookFromFile(String filePath) {
+        LOGGER.info("Starting to read address book from file: " + filePath);
         FileReader fileReader = new FileReader();
         try {
             fileReader.readFromFile(filePath, this::processAddressBookLine);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
+        } catch (RuntimeException e) {
+            LOGGER.warning("Error occurred while reading the address book from file: " + filePath);
+            throw e;
         }
+        LOGGER.info("Completed reading address book from file.");
     }
 
     private void processAddressBookLine(String line) {
         String[] parts = line.split(", ");
-        String name = parts[0];
-        String gender = parts[1];
+        if (parts.length != 3) {
+            LOGGER.warning("Malformed line: " + line);
+            return;
+        }
         try {
-            Date birthDate = new SimpleDateFormat("dd/MM/yy").parse(parts[2]);
+            String name = parts[0];
+            String gender = parts[1];
+            Date birthDate = DateUtil.parseDate(parts[2]);
             addressBook.add(new Person(name, gender, birthDate));
-        } catch (ParseException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            LOGGER.warning("Error processing line: " + line + "; Error: " + e.getMessage());
         }
     }
 
     public int countMales() {
-        int maleCount = 0;
-        for (Person person : addressBook) {
-            if ("Male".equals(person.getGender())) {
-                maleCount++;
-            }
-        }
-        return maleCount;
+        return (int) addressBook.stream()
+                .filter(person -> "Male".equals(person.getGender()))
+                .count();
     }
 
     public Person findOldestPerson() {
-        if (addressBook.isEmpty()) {
-            return null;
-        }
-
-        Person oldestPerson = addressBook.get(0); // Assume the first person is the oldest initially
-        for (Person person : addressBook) {
-            if (person.getBirthDate().before(oldestPerson.getBirthDate())) {
-                oldestPerson = person;
-            }
-        }
-        return oldestPerson;
+        return addressBook.stream()
+                .min(Comparator.comparing(Person::getBirthDate))
+                .orElse(null);
     }
 
     //Prefer to use the full name instead of the firstname because it's a better identifier
@@ -62,7 +58,13 @@ public class AddressBook {
         Person person2 = findPersonByName(person2Name);
 
         if (person1 == null || person2 == null) {
-            return -1; // Handle the case when one or both persons are not found
+            if (person1 == null) {
+                LOGGER.warning("Person not found: " + person1Name);
+            }
+            if (person2 == null) {
+                LOGGER.warning("Person not found: " + person2Name);
+            }
+            return -1;
         }
 
         long differenceInMillis = person1.getBirthDate().getTime() - person2.getBirthDate().getTime();
@@ -75,13 +77,7 @@ public class AddressBook {
                 return person;
             }
         }
-        return null; // Handle the case when the person is not found
-    }
-
-    public void printAddressBook() {
-        for (Person person : addressBook) {
-            System.out.println("Name: " + person.getName() + ", Gender: " + person.getGender() + ", Birthdate: " + person.getBirthDate());
-        }
+        return null;
     }
 
     public List<Person> getAddressBook() {
